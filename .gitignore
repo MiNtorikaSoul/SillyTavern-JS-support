@@ -1,0 +1,8 @@
+gen.js
+base64.txt
+base64_single.txt
+
+st_*.js
+*.json
+!manifest.json
+

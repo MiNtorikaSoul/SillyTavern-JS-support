@@ -1,0 +1,12 @@
+{
+  "display_name": "SillyTavern JS",
+  "loading_order": 1,
+  "requires": [],
+  "optional": [],
+  "js": "index.js",
+  "css": "",
+  "author": "MiNtorika",
+  "version": "1.0.0",
+  "homePage": "https://github.com/MiNtorikaSoul/SillyTavern-JS-support",
+  "auto_update": false
+}
