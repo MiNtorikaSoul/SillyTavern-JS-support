@@ -1,8 +1,9 @@
 gen.js
 base64.txt
 base64_single.txt
-
-st_*.js
-*.json
-!manifest.json
-
+assets/
+_*.js
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
