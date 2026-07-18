@@ -13,7 +13,10 @@
     var errors = (window.__tavoErrors = []);
     (function hideTavoStyle() {
         var s = document.createElement('style');
-        s.textContent = 'tavo-style{display:none!important}';
+        s.textContent = 'tavo-style{display:none!important}' +
+            '@media (max-width:900px), (pointer:coarse){' +
+            '#tavo-debug-btn,#tavo-debug-panel{display:none!important;pointer-events:none!important}' +
+            '}';
         (document.head || document.documentElement).appendChild(s);
     })();
     var cssSet = new Set();
@@ -21,31 +24,44 @@
     var captureModes = [];
     var generating = false;
 
-    var btn = document.createElement('div');
-    btn.id = 'tavo-debug-btn';
-    btn.style.cssText = 'position:fixed;bottom:10px;right:10px;z-index:2147483647;background:#9a6a7a;color:#fff;padding:6px 10px;border-radius:10px;font-size:11px;font-family:sans-serif;cursor:pointer;opacity:.85;';
-    btn.textContent = 'ST-JS';
-
-    var panel = document.createElement('div');
-    panel.id = 'tavo-debug-panel';
-    panel.style.cssText = 'display:none;position:fixed;bottom:40px;right:10px;width:340px;max-height:60vh;overflow:auto;z-index:2147483647;background:#18171d;color:#e0d8e0;border:1px solid #7a4a58;padding:10px;border-radius:10px;font-size:11px;font-family:monospace;white-space:pre-wrap;';
-
-    (function appendOverlay() {
-        if (document.body) {
-            document.body.appendChild(btn);
-            document.body.appendChild(panel);
-        } else {
-            setTimeout(appendOverlay, 50);
+    var isMobileUi = (function () {
+        try {
+            return window.matchMedia('(max-width:900px), (pointer:coarse)').matches;
+        } catch (e) {
+            return Math.min(screen.width, screen.height) <= 900;
         }
     })();
 
-    btn.addEventListener('click', function () {
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        renderPanel();
-    });
+    var btn = null;
+    var panel = null;
+    if (!isMobileUi) {
+        btn = document.createElement('div');
+        btn.id = 'tavo-debug-btn';
+        btn.style.cssText = 'position:fixed;bottom:10px;right:10px;z-index:2147483647;background:#9a6a7a;color:#fff;padding:6px 10px;border-radius:10px;font-size:11px;font-family:sans-serif;cursor:pointer;opacity:.85;';
+        btn.textContent = 'ST-JS';
+
+        panel = document.createElement('div');
+        panel.id = 'tavo-debug-panel';
+        panel.style.cssText = 'display:none;position:fixed;bottom:40px;right:10px;width:340px;max-height:60vh;overflow:auto;z-index:2147483647;background:#18171d;color:#e0d8e0;border:1px solid #7a4a58;padding:10px;border-radius:10px;font-size:11px;font-family:monospace;white-space:pre-wrap;';
+
+        (function appendOverlay() {
+            if (document.body) {
+                document.body.appendChild(btn);
+                document.body.appendChild(panel);
+            } else {
+                setTimeout(appendOverlay, 50);
+            }
+        })();
+
+        btn.addEventListener('click', function () {
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            renderPanel();
+        });
+    }
 
     var panelPending = false;
     function renderPanel() {
+        if (!btn || !panel) return;
         if (panelPending) return;
         panelPending = true;
         setTimeout(function () {
